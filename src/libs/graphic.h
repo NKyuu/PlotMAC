@@ -1,0 +1,5 @@
+#if !defined(GRAPH_UNDEFINED)
+#define GRAPH_UNDEFINED
+
+
+#endif // GRAPH_UNDEFINED
