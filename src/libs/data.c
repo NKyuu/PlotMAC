@@ -21,7 +21,7 @@ void carrega_dados(char *caminho_dos_dados, int *linhas,
     int i = 0;
     int cols;
     float table[MAXROWS][MAXCOLS] = {{}};
-    char *names[] = {};
+    char* names[] = {};
 
 
     while(fgets(line, sizeof(line), csv))
