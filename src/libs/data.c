@@ -10,6 +10,7 @@ void carrega_dados(char *caminho_dos_dados, int *linhas,
     FILE *csv;
     csv = fopen(caminho_dos_dados, "r");
 
+    //Checking if the file is there
     if(csv == NULL)
     {
         perror("Error opening the file");
@@ -18,11 +19,10 @@ void carrega_dados(char *caminho_dos_dados, int *linhas,
 
     char line[200];
 
-    int i = 0;
-    int cols;
-    float table[MAXROWS][MAXCOLS] = {{}};
-    char* names[] = {};
-
+    int i = 0; //Rows number
+    int cols; //Columns number
+    float table[MAXROWS][MAXCOLS] = {{}}; //Table that is being read
+    char* names[] = {}; //Name of the columns
 
     while(fgets(line, sizeof(line), csv))
     {
@@ -61,6 +61,7 @@ void carrega_dados_url(char *caminho_dos_dados, int *linhas,
 
     FILE *fp;
  
+    //Downloading the file
     curl = curl_easy_init();
     if(curl) {
         curl_easy_setopt(curl, CURLOPT_URL, caminho_dos_dados);
@@ -79,5 +80,6 @@ void carrega_dados_url(char *caminho_dos_dados, int *linhas,
         curl_easy_cleanup(curl);
     }
 
+    //Reading the downloaded file as a local one.
     carrega_dados(file, linhas, colunas, planilha, nomes_linhas);
 }

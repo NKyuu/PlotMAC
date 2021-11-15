@@ -42,11 +42,13 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
 
     int length_name = sizeof(length_name)/sizeof(char);
 
+    //Title printing
     for(int i = 0; i < MAXCOLS/2 - length_name; i++) printf(" ");
     printf("%s", title);
     printf("\n");
     printf("\n");
 
+    //Graph plotting
     for(int j = MAXCOLS; j > 0; j--)
     {
         for(int i = MAXROWS; i > 0; i--)
