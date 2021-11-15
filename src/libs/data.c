@@ -34,9 +34,7 @@ void carrega_dados(char *caminho_dos_dados, int *linhas,
             if(i == 0)
             {
                 names[j] = token;
-            }
-
-            table[i][j++] = atof(token);
+            } else table[i][j++] = atof(token);
         }
         i++;
 
@@ -51,4 +49,35 @@ void carrega_dados(char *caminho_dos_dados, int *linhas,
     planilha = &table;
     nomes_linhas = names;
 
+}
+
+void carrega_dados_url(char *caminho_dos_dados, int *linhas, 
+                        int *colunas, void *planilha, char *nomes_linhas[])
+{
+    CURL *curl;
+    CURLcode res;
+
+    char file[100] = "\\tmp\\file.csv";
+
+    FILE *fp;
+ 
+    curl = curl_easy_init();
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, caminho_dos_dados);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        fp = fopen(file,"wb");
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        curl_easy_cleanup(curl);
+        fclose(fp);
+    
+        res = curl_easy_perform(curl);
+        if(res != CURLE_OK)
+        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+                curl_easy_strerror(res));
+    
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+    }
+
+    carrega_dados(file, linhas, colunas, planilha, nomes_linhas);
 }
