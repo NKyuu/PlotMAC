@@ -139,41 +139,43 @@ void carrega_dados_url(char *caminho_dos_dados, int *linhas,
 {
     struct stat sb;
 
-    if(stat("tmp/", &sb) == -1)
+    if(stat("downloads/", &sb) == -1)
     {
-        mkdir("tmp/", 0700);
+        mkdir("downloads/", 0700);
     }
 
     char *name = get_name(caminho_dos_dados);
-    char file[200] = "tmp/";
+    char file[200] = "downloads/";
     strcat(file, name);
 
     FILE * fp; 
 
     CURL *curl;
     CURLcode res;
+
+    curl_global_init(CURL_GLOBAL_ALL);
     //Downloading the file
     curl = curl_easy_init();
     if(curl) {
         fp = fopen(file, "wb");
         curl_easy_setopt(curl, CURLOPT_URL, caminho_dos_dados);
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        curl_easy_cleanup(curl);
-        fclose(fp);
     
         res = curl_easy_perform(curl);
         if(res != CURLE_OK)
-        fprintf(stderr, "curl_easy_perform() failed: %s\n",
+            fprintf(stderr, "curl_easy_perform() failed: %s\n",
                 curl_easy_strerror(res));
     
+        fclose(fp);
         /* always cleanup */
         curl_easy_cleanup(curl);
+        curl_global_cleanup();
     }
 
     //Reading the downloaded file as a local one.
-    //carrega_dados(file, linhas, colunas, planilha, nomes_linhas);
+    carrega_dados(file, linhas, colunas, planilha, nomes_linhas);
 }
 
 main()
@@ -191,9 +193,13 @@ main()
 
     char *nomes[1000];
 
-    /*carrega_dados("../../resources/BRICS_PIBPerCapita.csv", &linhas, &colunas, table, nomes);
-    printf("%s", nomes[0]);*/
-    carrega_dados_url("http://www.ime.usp.br/~kon/tmp/BRICS_TaxaDeFertilidade.csv", &linhas, &colunas, table, nomes);
-
+    /*
+     *
+     * carrega_dados("../../resources/BRICS_PIBPerCapita.csv", &linhas, &colunas, table, nomes);
+     * printf("%s", nomes[0]);
+     * 
+     */
+    carrega_dados_url("https://www.ime.usp.br/~kon/tmp/BRICS_TaxaDeFertilidade.csv", &linhas, &colunas, table, nomes);
+    printf("%s", nomes[0]);
     return 0;
 }

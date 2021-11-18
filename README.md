@@ -3,8 +3,7 @@
 
 ![MAC](https://img.shields.io/badge/MAC-0216-success?style=flat-square) ![C](https://img.shields.io/badge/-C-blue?style=flat-square)
 </br></br>
-<img src="./resources/usp.png" alt="Logo" style="max-width: 100px; width: 100%; max-heigth: auto;
-heigth: 100%;"></br></br>
+<img src="./resources/usp.png" alt="Logo" style="width: 250px; height: auto;"></br></br>
 <!--ts-->
    * [About](#About)
 <!--te-->
