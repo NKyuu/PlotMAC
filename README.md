@@ -2,9 +2,9 @@
 #### Nícolas Marins Pereira | NUSP 11952883
 
 ![MAC](https://img.shields.io/badge/MAC-0216-success?style=flat-square) ![C](https://img.shields.io/badge/-C-blue?style=flat-square)
-</br>
-<img src="./resources/usp.png" alt="Logo" style="max-width: 320px; width: 100%; max-heigth: auto;
-heigth: 100%;"></br>
+</br></br>
+<img src="./resources/usp.png" alt="Logo" style="max-width: 100px; width: 100%; max-heigth: auto;
+heigth: 100%;"></br></br>
 <!--ts-->
    * [About](#About)
 <!--te-->
