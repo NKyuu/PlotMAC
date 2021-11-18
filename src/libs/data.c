@@ -59,9 +59,8 @@ const char* get_name(char *url)
             i++;
         }
 
-        return arr[length - 1];
-
         free(tofree);
+        return arr[length - 1];
     } else return "";
 }
 

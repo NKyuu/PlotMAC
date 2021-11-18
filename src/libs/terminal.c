@@ -8,7 +8,6 @@
 
 int *colunas = 100;
 char* title;
-char* name;
 char* x;
 char* y;
 char* col_names;
@@ -21,7 +20,7 @@ void define_titulo(char *titulo)
 
 void define_rotulo_x(char *nome)
 {
-    name = nome;
+    x = nome;
 }
 
 void define_rotulo_y(char *nome)
