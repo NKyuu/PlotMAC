@@ -1,5 +1,10 @@
 .vscode
 data
 graphic
+terminal
+plot
 tmp/
 downloads/
+build/
+teste.png
+testet.png

@@ -7,7 +7,6 @@
 #include <errno.h>
 #include "graphic.h"
 
-int *colunas = 1000;
 char* title = "";
 char* x = "";
 char* y = "";
@@ -33,7 +32,7 @@ void define_nomes_linhas(char *nomes_linhas[])
     col_names = nomes_linhas;
 }
 
-void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
+void desenha_grafico(int linhas, int colunas, float** planilha)
 {
     FILE * fp;
 
@@ -74,7 +73,7 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
         gnucmds[6+i] = strdup(cmd_line);
     }
 
-    gnucmds[5+t] = "set terminal dumb";
+    gnucmds[5+t] = "set terminal dumb 100, 50";
 
     char cmd_plot[500] = "plot \'tmp/";
     strcat(cmd_plot, title);
@@ -82,7 +81,6 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
 
     for(int i = 0; i < t-1; i++)
     {
-        printf("%d\n", i);
         strcat(cmd_plot, " u 1:");
         char str[50];
         sprintf(str, "%d", i+2);
@@ -100,7 +98,11 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
         }
     }
 
-    gnucmds[6+t] = "set size 100, 50";
+    char cmd_margin[200] = "set lmargin ";
+    char margin[50];
+    sprintf(margin, "%f", 4.5 * strlen(y) + 4.5);
+    strcat(cmd_margin, margin);
+    gnucmds[6+t] = cmd_margin;
     gnucmds[7+t] = cmd_plot;
     gnucmds[8+t] = "set output";
 
@@ -118,7 +120,7 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
 
     fp = fopen(file, "wb");
 
-    for(int j = 0; j < colunas; j++)
+    for(int j = 1; j < colunas; j++)
     {
         for(int i = 0; i < linhas; i++)
         {
@@ -142,14 +144,13 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
     fclose(gnupipe);
 }
 
-void terminal(char *title, char *xlabel, char *ylabel, char *lines_names[], int rows, int cols, void *table)
+void terminal(char *title, char *xlabel, char *ylabel, char *lines_names[], int rows, int cols, float** table)
 {
-    float **ftable = (float **)table;
     define_titulo(title);
     define_rotulo_x(xlabel);
     define_rotulo_y(ylabel);
     define_nomes_linhas(lines_names);
-    desenha_grafico(rows, cols, ftable);
+    desenha_grafico(rows, cols, table);
 
     char gnu[100] = "tmp/";
     strcat(gnu, title);
@@ -167,10 +168,35 @@ void terminal(char *title, char *xlabel, char *ylabel, char *lines_names[], int 
     }
 }
 
+void plot(char *title, char *xlabel, char *ylabel, char *lines_names[], int rows, int cols, float** table)
+{
+    terminal(title, xlabel, ylabel, lines_names, rows, cols, table);
+}
+
+
 int main()
 {
     char* lines_names[] = {"a", "b"};
-    float table[][2] = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}};
+    float **table;
+    
+    table = malloc(1000 * sizeof(*table));
+
+    for(int i = 0; i < 1000; i++)
+    {
+        table[i] = malloc(1000 * sizeof(*table[i]));
+    }
+    
+    table[0][0] = 1;
+    table[0][1] = 1;
+    table[1][0] = 2;
+    table[1][1] = 2;
+    table[2][0] = 3;
+    table[2][1] = 3;
+    table[3][0] = 4;
+    table[3][1] = 4;
+    table[4][0] = 5;
+    table[4][1] = 5;
+
     terminal("testet", "x", "y", lines_names, 5, 2, table);
 
     return 0;

@@ -65,7 +65,7 @@ const char* get_name(char *url)
     } else return "";
 }
 
-void carrega_dados(char *caminho_dos_dados, int *linhas, 
+void load(char *caminho_dos_dados, int *linhas, 
                         int *colunas, void *planilha, char *nomes_linhas[])
 {
     FILE * csv;
@@ -133,15 +133,59 @@ void carrega_dados(char *caminho_dos_dados, int *linhas,
     *colunas = cols;
 }
 
+void carrega_dados(char *caminho_dos_dados, int *linhas, 
+                        int *colunas, void *planilha, char *nomes_linhas[])
+{
+    struct stat sb;
+
+    if(stat("downloads/", &sb) == -1)
+    {
+        mkdir("downloads/", 0700);
+    }
+
+    const char *name = get_name(caminho_dos_dados);
+    char file[200] = "downloads/";
+    strcat(file, name);
+
+    FILE * fp; 
+
+    CURL *curl;
+    CURLcode res;
+
+    curl_global_init(CURL_GLOBAL_ALL);
+    //Downloading the file
+    curl = curl_easy_init();
+    if(curl) {
+        fp = fopen(file, "wb");
+        curl_easy_setopt(curl, CURLOPT_URL, caminho_dos_dados);
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+    
+        res = curl_easy_perform(curl);
+        if(res != CURLE_OK)
+            fprintf(stderr, "curl_easy_perform() failed: %s\n",
+                curl_easy_strerror(res));
+    
+        fclose(fp);
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+        curl_global_cleanup();
+    }
+
+    //Reading the downloaded file as a local one.
+    load(file, linhas, colunas, planilha, nomes_linhas);
+}
+
 char* print_info()
 {
-        char *exs[6] = {
-        "../resources/BRICS_PIBPerCapita.csv",
-        "../resources/BRICS_ExportacaoTecnologica.csv",
-        "../resources/BRICS_ExpectativaDeVida.csv",
-        "../resources/BRICS_MortalidadeInfantil.csv",
-        "../resources/BRICS_EmissaoDeCO2PerCapita.csv",
-        "../resources/BRICS_TaxaDeFertilidade.csv"
+    char *exs[6] = {
+        "http://www.ime.usp.br/~kon/tmp/BRICS_PIBPerCapita.csv",
+        "https://www.ime.usp.br/~kon/tmp/BRICS_ExportacaoTecnologica.csv",
+        "https://www.ime.usp.br/~kon/tmp/BRICS_ExpectativaDeVida.csv",
+        "https://www.ime.usp.br/~kon/tmp/BRICS_MortalidadeInfantil.csv",
+        "https://www.ime.usp.br/~kon/tmp/BRICS_EmissaoDeCO2PerCapita.csv",
+        "https://www.ime.usp.br/~kon/tmp/BRICS_TaxaDeFertilidade.csv"
     };
 
     srand(time(NULL));
@@ -150,7 +194,7 @@ char* print_info()
 
 void printi()
 {
-    printf("<path> is a path/to/file\n");
+    printf("<path> is a URL to download the file\n");
 }
 
 /*

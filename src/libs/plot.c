@@ -7,7 +7,6 @@
 #include <errno.h>
 #include "graphic.h"
 
-int *colunas = 1000;
 char* title = "";
 char* x = "";
 char* y = "";
@@ -33,11 +32,11 @@ void define_nomes_linhas(char *nomes_linhas[])
     col_names = nomes_linhas;
 }
 
-void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
+void desenha_grafico(int linhas, int colunas, float** planilha)
 {
     FILE * fp;
 
-    int t = colunas;
+    int t = linhas;
     char *gnucmds[9+t];
     gnucmds[0] = "set style data linespoints";
     gnucmds[1] = "set term postscript color";
@@ -69,7 +68,7 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
         sprintf(str, "%d", i+1);
         strcat(cmd_line, str);
         strcat(cmd_line, " \'");
-        strcat(cmd_line, col_names[i]);
+        strcat(cmd_line, col_names[i + 1]);
         strcat(cmd_line, "\'");
         gnucmds[6+i] = strdup(cmd_line);
     }
@@ -93,7 +92,7 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
         sprintf(str, "%d", i+2);
         strcat(cmd_plot, str);
         strcat(cmd_plot, " w lp t \'");
-        strcat(cmd_plot, col_names[i]);
+        strcat(cmd_plot, col_names[i+1]);
         strcat(cmd_plot, "\'");
 
         if(i+1 < t-1) 
@@ -119,10 +118,9 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
     strcat(file, title);
     strcat(file, ".dat");
 
-
     fp = fopen(file, "wb");
 
-    for(int j = 0; j < colunas; j++)
+    for(int j = 1; j < colunas; j++)
     {
         for(int i = 0; i < linhas; i++)
         {
@@ -146,14 +144,13 @@ void desenha_grafico(int linhas, int colunas, float planilha[][colunas])
     fclose(gnupipe);
 }
 
-void gnuplot(char *title, char *xlabel, char *ylabel, char *lines_names[], int rows, int cols, void *table)
+void gnuplot(char *title, char *xlabel, char *ylabel, char *lines_names[], int rows, int cols, float** table)
 {
-    float **ftable = (float **)table;
     define_titulo(title);
     define_rotulo_x(xlabel);
     define_rotulo_y(ylabel);
     define_nomes_linhas(lines_names);
-    desenha_grafico(rows, cols, ftable);
+    desenha_grafico(rows, cols, table);
 
     char gnu[100] = "tmp/";
     strcat(gnu, title);
@@ -171,6 +168,13 @@ void gnuplot(char *title, char *xlabel, char *ylabel, char *lines_names[], int r
     }
 }
 
+void plot(char *title, char *xlabel, char *ylabel, char *lines_names[], int rows, int cols, float** table)
+{
+    gnuplot(title, xlabel, ylabel, lines_names, rows, cols, table);
+}
+
+/*
+
 int main()
 {
     char* lines_names[] = {"a", "b"};
@@ -179,3 +183,5 @@ int main()
 
     return 0;
 }
+
+*/
