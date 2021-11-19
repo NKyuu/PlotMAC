@@ -3,9 +3,8 @@
 #include "libs/graphic.h"
 #include "libs/data.h"
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
-    /*
     if(argc != 5)
     {
         printf("Error: number of arguments is not valid.\n");
@@ -18,7 +17,7 @@ int main(int argc, char const *argv[])
     char* title = argv[1];
     char* xlabel = argv[2];
     char* ylabel = argv[3];
-    char* path = argv[4];*/
+    char* path = argv[4];
 
     int linhas;
     int colunas;
@@ -33,9 +32,9 @@ int main(int argc, char const *argv[])
     
     char *nomes[1000];
 
-    carrega_dados("resources/BRICS_PIBPerCapita.csv", &linhas, &colunas, table, nomes);
+    carrega_dados(path, &linhas, &colunas, table, nomes);
 
-    plot("teste", "x", "y", nomes, linhas, colunas, table);
+    plot(title, xlabel, ylabel, nomes, linhas, colunas, table);
 
     return 0;
 }

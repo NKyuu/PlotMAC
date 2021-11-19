@@ -36,7 +36,7 @@ void desenha_grafico(int linhas, int colunas, float** planilha)
 {
     FILE * fp;
 
-    int t = colunas;
+    int t = linhas;
     char *gnucmds[9+t];
     gnucmds[0] = "set style data linespoints";
     gnucmds[1] = "set term postscript color";
@@ -52,13 +52,6 @@ void desenha_grafico(int linhas, int colunas, float** planilha)
     strcat(cmd_xlabel, "\'");
 
     gnucmds[3] = cmd_xlabel;
-
-    char cmd_ylabel[200] = "set ylabel \'";
-    strcat(cmd_ylabel, y);
-    strcat(cmd_ylabel, "\'");
-
-    gnucmds[4] = cmd_ylabel;
-
     gnucmds[5] = "set datafile separator whitespace";
 
     for(int i = 0; i < t-1; i++)
@@ -98,11 +91,7 @@ void desenha_grafico(int linhas, int colunas, float** planilha)
         }
     }
 
-    char cmd_margin[200] = "set lmargin ";
-    char margin[50];
-    sprintf(margin, "%f", 4.5 * strlen(y) + 4.5);
-    strcat(cmd_margin, margin);
-    gnucmds[6+t] = cmd_margin;
+    gnucmds[6+t] = "set lmargin 9";
     gnucmds[7+t] = cmd_plot;
     gnucmds[8+t] = "set output";
 
@@ -139,7 +128,22 @@ void desenha_grafico(int linhas, int colunas, float** planilha)
     gnupipe = fopen(gnu, "wb");
 
     for(int i = 0; i < 9+t; i++)
-        fprintf(gnupipe, "%s\n", gnucmds[i]);
+    {
+        if(i == 4)
+        {
+            fprintf(gnupipe, "set ylabel \"");
+
+            for(int j = 0; j < strlen(y); j++)
+            {
+                if(j == strlen(y) - 1)
+                {
+                    fprintf(gnupipe, "%c", y[j]);
+                } else fprintf(gnupipe, "%c\\n ", y[j]);
+            }
+
+            fprintf(gnupipe, "\"\n");
+        } else fprintf(gnupipe, "%s\n", gnucmds[i]);
+    }
 
     fclose(gnupipe);
 }
@@ -174,30 +178,30 @@ void plot(char *title, char *xlabel, char *ylabel, char *lines_names[], int rows
 }
 
 
-int main()
-{
-    char* lines_names[] = {"a", "b"};
-    float **table;
+// int main()
+// {
+//     char* lines_names[] = {"a", "b"};
+//     float **table;
     
-    table = malloc(1000 * sizeof(*table));
+//     table = malloc(1000 * sizeof(*table));
 
-    for(int i = 0; i < 1000; i++)
-    {
-        table[i] = malloc(1000 * sizeof(*table[i]));
-    }
+//     for(int i = 0; i < 1000; i++)
+//     {
+//         table[i] = malloc(1000 * sizeof(*table[i]));
+//     }
     
-    table[0][0] = 1;
-    table[0][1] = 1;
-    table[1][0] = 2;
-    table[1][1] = 2;
-    table[2][0] = 3;
-    table[2][1] = 3;
-    table[3][0] = 4;
-    table[3][1] = 4;
-    table[4][0] = 5;
-    table[4][1] = 5;
+//     table[0][0] = 1;
+//     table[0][1] = 1;
+//     table[1][0] = 2;
+//     table[1][1] = 2;
+//     table[2][0] = 3;
+//     table[2][1] = 3;
+//     table[3][0] = 4;
+//     table[3][1] = 4;
+//     table[4][0] = 5;
+//     table[4][1] = 5;
 
-    terminal("testet", "x", "y", lines_names, 5, 2, table);
+//     terminal("testet", "x", "y", lines_names, 5, 2, table);
 
-    return 0;
-}
+//     return 0;
+// }
